@@ -4,6 +4,7 @@ from socket import AF_INET, socket, SOCK_STREAM
 from threading import Thread
 import tkinter
 import Enigma
+import Cracker
 
 
 def receive():
@@ -16,6 +17,8 @@ def receive():
                 prefix, message = msg.split(":", 1)
             except:
                 message = msg
+            if key1 == -1:
+                Cracker.findkeys(message, possible_words)
             message = Enigma.decrypt(message, key1, key2, key3)
             msg = prefix + ":" + message
             msg_list.insert(tkinter.END, msg)
@@ -39,6 +42,7 @@ def on_closing(event=None):
     my_msg.set("{quit}")
     send()
 
+
 top = tkinter.Tk()
 top.title("Chatter")
 
@@ -61,10 +65,12 @@ send_button.pack()
 
 top.protocol("WM_DELETE_WINDOW", on_closing)
 
-#----Now comes the sockets part----
+# ----Now comes the sockets part----
 HOST = input('Enter host: ')
 PORT = input('Enter port: ')
 key1, key2, key3 = [int(n) for n in input("Keys, separated by a space").split(" ")]
+
+possible_words = ['hello', 'test', 'you', 'are']
 
 if not PORT:
     PORT = 33000
